@@ -1,10 +1,13 @@
 import "./App.css";
+import RegistrationQuery from "./components/SpotReg";
 
 function App() {
   return (
     <>
-      <div className="w-full h-screen flex justify-center items-center overflow-hidden">
-        <h1 className="font-pop font-bold text-5xl">Coming Soon ...</h1>
+      <div className="main container">
+        <div className="w-full h-screen pr-4 pl-4 flex justify-center items-center overflow-hidden">
+          <RegistrationQuery />
+        </div>
       </div>
     </>
   );
