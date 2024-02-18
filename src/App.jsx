@@ -1,15 +1,18 @@
 import "./App.css";
-import RegistrationQuery from "./pages/SpotReg";
+import { RouterPaths } from "./components/Router";
+import { BrowserRouter as Router } from "react-router-dom";
 
 function App() {
   return (
-    <>
-      <div className="main container">
-        <div className="w-full h-screen pr-4 pl-4 flex justify-center items-center overflow-hidden">
-          <RegistrationQuery />
+    <div className="app-container">
+      <Router>
+        <div className="main container flex justify-center items-center">
+          <div className="overflow-container">
+            <RouterPaths/>
+          </div>
         </div>
-      </div>
-    </>
+      </Router>
+    </div>
   );
 }
 
