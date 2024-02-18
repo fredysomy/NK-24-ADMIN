@@ -1,9 +1,17 @@
 /** @type {import('tailwindcss').Config} */
-export default {
-  content: [],
+import { defineConfig } from 'vite-plugin-windicss';
+const defaultTheme = require('tailwindcss/defaultTheme');
+ export default defineConfig({
+  content: [
+    "./src/**/*.{js,jsx,ts,tsx}",
+  ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        pop:['Poppins', ...defaultTheme.fontFamily.sans],
+      }
+    },
   },
   plugins: [],
-}
+});
 
