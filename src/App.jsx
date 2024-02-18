@@ -1,5 +1,5 @@
 import "./App.css";
-import RegistrationQuery from "./components/SpotReg";
+import RegistrationQuery from "./pages/SpotReg";
 
 function App() {
   return (
