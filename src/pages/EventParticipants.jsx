@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { db } from "../firebase/firebase";
-import { collection, query, where, getDocs, doc, getDoc } from "firebase/firestore";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  doc,
+  getDoc,
+} from "firebase/firestore";
 
 function ParticipantDetails() {
   const [eventid, setEventId] = useState(""); // State for storing the event ID
@@ -15,7 +22,7 @@ function ParticipantDetails() {
     setError(null);
     setParticipants([]);
     setEventName(""); // Reset event name
-  
+
     try {
       const eventData = await fetchEvent(eventid); // Fetch event details
       setEventName(eventData.name); // Set the event name
@@ -24,10 +31,9 @@ function ParticipantDetails() {
     } catch (error) {
       setError(error.message);
     }
-  
+
     setLoading(false);
   };
-  
 
   const handleInputChange = (event) => {
     setEventId(event.target.value);
@@ -49,7 +55,6 @@ function ParticipantDetails() {
       throw error;
     }
   };
-  
 
   const fetchParticipantDetails = async (eventId) => {
     try {
@@ -68,7 +73,7 @@ function ParticipantDetails() {
           college: userData.college,
           semester: userData.semester,
           branch: userData.branch,
-          team: participantData.team ? participantData.team : null // Check if team details exist, otherwise set to null
+          team: participantData.team ? participantData.team : null, // Check if team details exist, otherwise set to null
         });
       }
       return participantDetails;
@@ -80,7 +85,7 @@ function ParticipantDetails() {
 
   const fetchUserData = async (nkid) => {
     try {
-      const usersRef = collection(db, 'users');
+      const usersRef = collection(db, "users");
       const q = query(usersRef, where("NKID", "==", nkid));
       const querySnapshot = await getDocs(q);
       if (!querySnapshot.empty) {
@@ -116,9 +121,13 @@ function ParticipantDetails() {
           </button>
         </form>
       </div>
-      {eventName && <h2 className="text-lg font-semibold mb-4">Event Name: {eventName}</h2>} {/* Display event name */}
+      {eventName && (
+        <h2 className="text-lg font-semibold mb-4">Event Name: {eventName}</h2>
+      )}{" "}
+      {/* Display event name */}
       {loading && <div>Loading...</div>}
-      {error && <div className="text-red-500">{error}</div>} {/* Display error message */}
+      {error && <div className="text-red-500">{error}</div>}{" "}
+      {/* Display error message */}
       <div className="flex justify-center items-center">
         {participants.length > 0 ? (
           <table className="border border-gray-200 divide-gray-500">

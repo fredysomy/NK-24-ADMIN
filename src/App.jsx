@@ -6,10 +6,8 @@ function App() {
   return (
     <div className="app-container">
       <Router>
-        <div className="main container flex justify-center items-center">
-          <div className="overflow-container">
-            <RouterPaths/>
-          </div>
+        <div className="overflow-container">
+          <RouterPaths />
         </div>
       </Router>
     </div>
