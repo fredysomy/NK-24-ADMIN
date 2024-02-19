@@ -1,71 +1,98 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { db } from "../firebase/firebase";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { collection, query, where, getDocs, doc, getDoc } from "firebase/firestore";
 
 function ParticipantDetails() {
-  const [eventid, setEventid] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [participants, setParticipants] = useState([]);
-  const [error, setError] = useState(null);
-  const [eventName, setEventName] = useState(null);
-
-  // Function to fetch event name
-  const fetchEventName = async () => {
-    if (!eventid) {
-      console.log("No event ID provided");
-      return;
-    }
-    try {
-      const eventsQuery = query(collection(db, "events"), where("id", "==", eventid));
-      const querySnapshot = await getDocs(eventsQuery);
-
-      if (!querySnapshot.empty) {
-        const eventDoc = querySnapshot.docs[0];
-        setEventName(eventDoc.data().name);
-      } else {
-        setEventName(null);
-        console.log("No event found for ID:", eventid);
-      }
-    } catch (error) {
-      console.error("Error fetching event name:", error);
-      setEventName(null);
-    }
-  };
+  const [eventid, setEventId] = useState(""); // State for storing the event ID
+  const [loading, setLoading] = useState(false); // State for loading status
+  const [error, setError] = useState(null); // State for error handling
+  const [participants, setParticipants] = useState([]); // State for storing participant details
+  const [eventName, setEventName] = useState(""); // State for storing the event name
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
     setError(null);
     setParticipants([]);
-
-    await fetchEventName(); // Fetch the event name here
-
+    setEventName(""); // Reset event name
+  
     try {
-      const participantQuery = query(
-        collection(db, "Registrations"),
-        where("eventid", "==", eventid)
-      );
-      const querySnapshot = await getDocs(participantQuery);
-
-      if (!querySnapshot.empty) {
-        const participantData = [];
-        querySnapshot.forEach((doc) => {
-          participantData.push({ id: doc.id, ...doc.data() });
-        });
-        setParticipants(participantData);
-      } else {
-        setError("No participants found for the given event ID");
-      }
+      const eventData = await fetchEvent(eventid); // Fetch event details
+      setEventName(eventData.name); // Set the event name
+      const participantDetails = await fetchParticipantDetails(eventid); // Fetch participant details
+      setParticipants(participantDetails);
     } catch (error) {
-      console.error("Error fetching participant details:", error);
-      setError("Error fetching participant details. Please try again later.");
+      setError(error.message);
     }
-
+  
     setLoading(false);
   };
+  
 
   const handleInputChange = (event) => {
-    setEventid(event.target.value);
+    setEventId(event.target.value);
+  };
+
+  const fetchEvent = async (eventId) => {
+    try {
+      const eventsRef = collection(db, "events");
+      const q = query(eventsRef, where("id", "==", eventId));
+      const querySnapshot = await getDocs(q);
+      if (!querySnapshot.empty) {
+        const eventData = querySnapshot.docs[0].data();
+        return eventData;
+      } else {
+        throw new Error("Event not found");
+      }
+    } catch (error) {
+      console.error("Error fetching event data:", error);
+      throw error;
+    }
+  };
+  
+
+  const fetchParticipantDetails = async (eventId) => {
+    try {
+      const participantsRef = collection(db, "Registrations");
+      const q = query(participantsRef, where("eventid", "==", eventId));
+      const querySnapshot = await getDocs(q);
+      if (querySnapshot.empty) {
+        throw new Error("No participants found for the entered event ID");
+      }
+      const participantDetails = [];
+      for (const docRef of querySnapshot.docs) {
+        const participantData = docRef.data();
+        const userData = await fetchUserData(participantData.nkid);
+        participantDetails.push({
+          ...participantData,
+          college: userData.college,
+          semester: userData.semester,
+          branch: userData.branch,
+          team: participantData.team ? participantData.team : null // Check if team details exist, otherwise set to null
+        });
+      }
+      return participantDetails;
+    } catch (error) {
+      console.error("Error fetching participant details:", error);
+      throw error;
+    }
+  };
+
+  const fetchUserData = async (nkid) => {
+    try {
+      const usersRef = collection(db, 'users');
+      const q = query(usersRef, where("NKID", "==", nkid));
+      const querySnapshot = await getDocs(q);
+      if (!querySnapshot.empty) {
+        const userData = querySnapshot.docs[0].data();
+        return userData;
+      } else {
+        throw new Error("User not found");
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+      throw error;
+    }
   };
 
   return (
@@ -89,20 +116,18 @@ function ParticipantDetails() {
           </button>
         </form>
       </div>
+      {eventName && <h2 className="text-lg font-semibold mb-4">Event Name: {eventName}</h2>} {/* Display event name */}
       {loading && <div>Loading...</div>}
-      {!loading && eventName && (
-        <h2 className="font-semi-bold text-white text-xl mb-4">Event: {eventName}</h2>
-      )}
-      {error && <div className="text-red-500">{error}</div>}
+      {error && <div className="text-red-500">{error}</div>} {/* Display error message */}
       <div className="flex justify-center items-center">
         {participants.length > 0 ? (
           <table className="border border-gray-200 divide-gray-500">
             {participants.map((participant, index) => (
-              <tbody key={participant.id} className="divide-y divide-gray-200">
+              <tbody key={index} className="divide-y divide-gray-200">
                 <tr>
                   <th
                     colSpan="2"
-                    className="px-6 py-3 text-center text-sm text-white"
+                    className="px-6 py-3 text-center text-sm text-white bg-gray-500"
                   >
                     Participant {index + 1}
                   </th>
@@ -115,7 +140,7 @@ function ParticipantDetails() {
                     Phone: {participant.phone}
                   </td>
                 </tr>
-                <tr className="bg-gray-500">
+                <tr>
                   <td className="px-6 py-4 text-sm text-white">
                     NKID: {participant.nkid}
                   </td>
@@ -123,6 +148,26 @@ function ParticipantDetails() {
                     Email: {participant.email}
                   </td>
                 </tr>
+                <tr className="bg-transparent">
+                  <td className="px-6 py-4 text-sm text-white" colSpan="2">
+                    College: {participant.college}
+                  </td>
+                </tr>
+                <tr className="bg-transparent">
+                  <td className="px-6 py-4 text-sm text-white">
+                    Branch: {participant.branch}
+                  </td>
+                  <td className="px-6 py-4 text-sm text-white">
+                    Semester: {participant.semester}
+                  </td>
+                </tr>
+                {participant.team && ( // Check if team details exist
+                  <tr className="bg-transparent">
+                    <td className="px-6 py-4 text-sm text-white" colSpan="2">
+                      Team: {participant.team}
+                    </td>
+                  </tr>
+                )}
               </tbody>
             ))}
           </table>
