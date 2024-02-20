@@ -1,95 +1,127 @@
 import React, { useState, useEffect } from "react";
 import { db } from "../firebase/firebase";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { collection, query, orderBy, getDocs, where } from "firebase/firestore";
 
 function AllParticipantDetails() {
-  const [loading, setLoading] = useState(true);
-  const [eventParticipants, setEventParticipants] = useState([]);
-  const [error, setError] = useState(null);
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true); // Add a loading state
 
   useEffect(() => {
-    const fetchEventsAndParticipants = async () => {
+    const fetchEvents = async () => {
       try {
-        const eventsSnapshot = await getDocs(collection(db, "events"));
-        const eventsData = [];
-        for (const eventDoc of eventsSnapshot.docs) {
-          const eventId = eventDoc.id;
-          const eventName = eventDoc.data().name;
-          const participantQuery = query(
-            collection(db, "Registrations"),
-            where("eventid", "==", eventId)
-          );
-          const participantSnapshot = await getDocs(participantQuery);
+        const eventsQuery = query(collection(db, "events"), orderBy("name"));
+        const eventsSnapshot = await getDocs(eventsQuery);
+        // Inside the fetchEvents function
 
-          const participants = [];
-          participantSnapshot.forEach((doc) => {
-            participants.push({ id: doc.id, ...doc.data() });
-          });
+        const eventDataPromises = eventsSnapshot.docs.map(async (doc) => {
+          try {
+            const event = doc.data();
+            if (!event || !event.name) {
+              throw new Error("Event data or name is null");
+            }
+            const registrationsQuery = query(
+              collection(db, "Registrations"),
+              where("eventid", "==", doc.data().id)
+            );
+            const registrationsSnapshot = await getDocs(registrationsQuery);
+            const registrationsDataPromises = registrationsSnapshot.docs.map(
+              async (regDoc) => {
+                const registration = regDoc.data();
+                const userQuery = query(
+                  collection(db, "users"),
+                  where("NKID", "==", registration.nkid)
+                );
+                const userSnapshot = await getDocs(userQuery);
+                const userData = userSnapshot.docs.map((userDoc) =>
+                  userDoc.data()
+                );
+                return {
+                  username: userData[0].name,
+                  college: userData[0].college,
+                  branch: userData[0].branch,
+                  email: registration.email,
+                };
+              }
+            );
+            const registrationsData = await Promise.all(
+              registrationsDataPromises
+            );
+            return {
+              id: doc.data().id,
+              name: event.name,
+              registrations: registrationsData,
+            };
+          } catch (error) {
+            console.error("Error processing event data: ", error);
+          }
+        });
 
-          eventsData.push({ eventId, eventName, participants });
-        }
-
-        setEventParticipants(eventsData);
+        const eventData = await Promise.all(eventDataPromises);
+        setEvents(eventData);
       } catch (error) {
-        console.error("Error fetching event participants:", error);
-        setError("Error fetching event participants. Please try again later.");
+        console.error("Error fetching events: ", error);
+      }finally {
+        setLoading(false); // Stop loading regardless of outcome
       }
-      setLoading(false);
     };
 
-    fetchEventsAndParticipants();
+    fetchEvents();
   }, []);
+  if (loading) {
+    return <div className="text-center text-white text-3xl font-bold">Loading...</div>; // Or replace with a spinner component
+  }
 
   return (
     <div className="text-white">
-      <h1 className="font-bold text-2xl mb-4">Event Participant Details</h1>
-      {loading && <div>Loading...</div>}
-      {error && <div className="text-red-500">{error}</div>}
-      {!loading &&
-        !error &&
-        eventParticipants.map(({ eventName, participants }) => (
-          <div key={eventName} className="mb-8">
-            <h2 className="font-bold text-xl mb-4">{eventName}</h2>
-            {participants.length > 0 ? (
-              <table className="border border-gray-200 divide-gray-500">
-                <tbody className="divide-y divide-gray-200">
-                  {participants.map((participant, index) => (
-                    <React.Fragment key={participant.id}>
-                      {index === 0 && (
-                        <tr>
-                          <th
-                            colSpan="2"
-                            className="px-6 py-3 text-center text-sm text-white"
+      <h2 className="font-bold text-3xl mb-10">
+        List of all Events and Participants
+      </h2>
+      <ul>
+        {events.map((event, index) => (
+          <li key={index}>
+            {event && event.name ? (
+              <div>
+                <h3 className="mt-10 mb-5 text-xl font-bold ">
+                  {event.name} (Event ID: {event.id})
+                </h3>
+                {event.registrations.length === 0 ? (
+                  <p>No registrations yet</p>
+                ) : (
+                  <div className="flex justify-center items-center">
+                    <table className="table-auto border-collapse border border-gray-100">
+                      <tbody>
+                        {event.registrations.map((registration, regIndex) => (
+                          <tr
+                            key={regIndex}
+                            className="border-b border-gray-200"
                           >
-                            Participants
-                          </th>
-                        </tr>
-                      )}
-                      <tr className="bg-transparent">
-                        <td className="px-6 py-4 text-sm text-white">
-                          Name: {participant.username}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-white">
-                          Phone: {participant.phone}
-                        </td>
-                      </tr>
-                      <tr className="bg-gray-500">
-                        <td className="px-6 py-4 text-sm text-white">
-                          NKID: {participant.nkid}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-white">
-                          Email: {participant.email}
-                        </td>
-                      </tr>
-                    </React.Fragment>
-                  ))}
-                </tbody>
-              </table>
+                            <td className="border border-gray-200 p-4">
+                              <p>
+                                <strong>Name:</strong> {registration.username}
+                              </p>
+                              <p>
+                                <strong>Email:</strong> {registration.email}
+                              </p>
+                              <p>
+                                <strong>College:</strong> {registration.college}
+                              </p>
+                              <p>
+                                <strong>Branch:</strong> {registration.branch}
+                              </p>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
             ) : (
-              <div>No participants for this event.</div>
+              <p>Error: Event data is null or missing</p>
             )}
-          </div>
+          </li>
         ))}
+      </ul>
     </div>
   );
 }
