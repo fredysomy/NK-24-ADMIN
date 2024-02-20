@@ -1,5 +1,12 @@
 {
   "hosting": {
+    "site":"nakshatra-admin",
+    "rewrites": [
+			{
+				"source": "**",
+				"destination": "/index.html"
+			}
+		],
     "public": "dist",
     "ignore": [
       "firebase.json",

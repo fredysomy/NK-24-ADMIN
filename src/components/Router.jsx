@@ -9,9 +9,9 @@ export function RouterPaths() {
   return (
     <Routes>
       <Route path="/eventparticipants" element={<ParticipantDetails />} />
-      <Route path="/onlinepage" element={<RegistrationQuery />} />
-      <Route path="/" element={<SelectionPage />} />
-      <Route path="/alldetails" element={<AllParticipantDetails />} />
+      {/*<Route path="/onlinepage" element={<RegistrationQuery />} />
+      <Route path="/" element={<SelectionPage />} />*/}
+      <Route path="/allparticipants" element={<AllParticipantDetails />} />
     </Routes>
   );
 }

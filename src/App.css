@@ -3,6 +3,8 @@
   text-align: center;
   background-color: black;
   font-family: 'Poppins';
+  padding-left: 5px;
+  padding-right: 5px;
 }
 .app-container {
   height: 100vh;

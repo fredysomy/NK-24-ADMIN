@@ -1,5 +1,15 @@
 {
   "projects": {
     "default": "nakshatra-9c45c"
-  }
+  },
+  "targets": {
+    "nakshatra-9c45c": {
+      "hosting": {
+        "Admin": [
+          "nakshatra-admin"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }
