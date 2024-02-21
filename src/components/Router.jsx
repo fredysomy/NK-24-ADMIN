@@ -12,14 +12,14 @@ export function RouterPaths() {
   return (
     <Routes>
       <Route path="/eventparticipants" element={<ParticipantDetails />} />
-     
-      <Route path="/events/:eventId" element={<ParticipantDetailsPage/>} /> {/* Route for the participant details page */}
-      <Route path="/events" element={<EventList/>} />
-      {/*
+      <Route
+        path="/events/:eventId"
+        element={<ParticipantDetailsPage />}
+      />{" "}
+      <Route path="/events" element={<EventList />} />
       <Route path="/" element={<Login />} />
       <Route path="/onlinepage" element={<RegistrationQuery />} />
-      
-  <Route path="/selection" element={<SelectionPage />} />*/}
+      <Route path="/selection" element={<SelectionPage />} />
     </Routes>
   );
 }
