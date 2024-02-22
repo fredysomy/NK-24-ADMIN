@@ -110,7 +110,7 @@ function ParticipantDetails() {
             value={eventid}
             onChange={handleInputChange}
             placeholder="Enter Event ID"
-            className="w-64 px-4 py-2 rounded-l-md border focus:outline-none bg-gray-500"
+            className="w-64 px-4 py-2 rounded-l-md border focus:outline-none bg-gray-500 placeholder-white"
           />
           <button
             type="submit"
