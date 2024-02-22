@@ -7,7 +7,7 @@ import AllParticipantDetails from "../pages/EventsList";
 import Login from "../pages/Login";
 import EventList from "../pages/EventsList";
 import ParticipantDetailsPage from "../pages/EventParticipantsPage";
-
+import SpotReg from "../pages/SpotReg";
 export function RouterPaths() {
   return (
     <Routes>
@@ -20,6 +20,7 @@ export function RouterPaths() {
       <Route path="/" element={<Login />} />
       <Route path="/onlinepage" element={<RegistrationQuery />} />
       <Route path="/selection" element={<SelectionPage />} />
+      <Route path="/spot-registration" element={<SpotReg />} />
     </Routes>
   );
 }
