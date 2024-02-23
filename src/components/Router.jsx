@@ -18,7 +18,8 @@ export function RouterPaths() {
       />
       <Route path="/events" element={<EventList />} />
       <Route path="/ca" element={<CampusAmbData />} />
-
+      <Route path="/selection" element={<SelectionPage />} />
+      <Route path="/" element={<Login />} />
       {/*
       <Route path="/" element={<Login />} />
       <Route path="/onlinepage" element={<RegistrationQuery />} />

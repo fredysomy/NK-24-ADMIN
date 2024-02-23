@@ -39,7 +39,8 @@ export const Login = () => {
         navigate('/eventparticipants');
       } else {
         // Redirect to selection page after successful login for non-super users
-        navigate('/selection');
+        const isAdmin = username === 'admin';
+        navigate('/selection', { state: { isAdmin } });
       }
     } else {
       alert('Please enter the correct username and password.');
