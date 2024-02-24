@@ -98,7 +98,7 @@ export function SimpleRegistrationForm() {
     try {
       await addDoc(collection(db, "users2test"), {
         CACode: ids,
-        NKID: `NK-${ids.substring(0, 6).toUpperCase()}`,
+        NKID: `NK-${ids.substring(0, 5).toUpperCase()}`,
         branch: formData.branch,
         college: formData.college,
         email: formData.email,
@@ -128,7 +128,7 @@ export function SimpleRegistrationForm() {
         eventId: formData.eventId,
         eventName: eventName,
         id: ids,
-        nkid: `NK-${ids.substring(0, 6).toUpperCase()}-${formData.eventId}`,
+        nkid: `NK-${ids.substring(0, 5).toUpperCase()}-${formData.eventId}`,
         online: true,
         paymentId: "spot",
         phone: formData.phone,
