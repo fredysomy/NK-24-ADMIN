@@ -7,7 +7,7 @@ import Login from "../pages/Login";
 import EventList from "../pages/EventsList";
 import ParticipantDetailsPage from "../pages/EventParticipantsPage";
 import SpotReg from "../pages/SpotReg";
-import CampusAmbData from "../pages/CampusAmbassador";
+import ModificationPage from "../pages/ModificationPage";
 export function RouterPaths() {
   return (
     <Routes>
@@ -17,16 +17,11 @@ export function RouterPaths() {
         element={<ParticipantDetailsPage />}
       />
       <Route path="/events" element={<EventList />} />
-      <Route path="/ca" element={<CampusAmbData />} />
-      <Route path="/selection" element={<SelectionPage />} />
-      <Route path="/" element={<Login />} />
-      {/*
       <Route path="/" element={<Login />} />
       <Route path="/onlinepage" element={<RegistrationQuery />} />
       <Route path="/selection" element={<SelectionPage />} />
       <Route path="/spot-registration" element={<SpotReg />} />
-  */}
-
+      <Route path="/modify-registration" element={<ModificationPage />} />
     </Routes>
   );
 }
