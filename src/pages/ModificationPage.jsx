@@ -17,7 +17,7 @@ function RegistrationQuery() {
   const [attended, setAttended] = useState(false);
   const [registrationData, setRegistrationData] = useState(null);
   const [team, setTeam] = useState(null);
-  const [selectedField, setSelectedField] = useState("attended");
+  const [selectedField, setSelectedField] = useState("name");
   const [newValue, setNewValues] = useState("");
 
   const navigate = useNavigate();
@@ -293,7 +293,7 @@ function RegistrationQuery() {
               //multiple
               className=" w-64 px-20 py-2 rounded-md border focus:outline-none bg-gray-800 text-white"
             >
-              <option className="text-black" value="" disabled>
+              <option value="" disabled>
                 Select Event
               </option>
               <option value="name">Name</option>
@@ -310,7 +310,7 @@ function RegistrationQuery() {
               <>
                 <label
                   htmlFor="newValue"
-                  className="py-5 font-bold mb-2 text-md text-white"
+                  className="py-5 font-bold text-md text-white"
                 >
                   New Value:
                 </label>
