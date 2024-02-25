@@ -20,7 +20,7 @@ function SelectionPage() { // Assuming isAdmin is passed as a prop
         Online Registration
       </button>
       <button
-        onClick={() => navigateTo("/spot-registration")}
+        onClick={() => navigateTo("/spotuserreg")}
         className="mx-4 bg-green-500 hover:bg-green-700 text-white font-bold py-20 px-20 rounded-lg text-2xl"
       >
         Spot Registration
@@ -28,7 +28,7 @@ function SelectionPage() { // Assuming isAdmin is passed as a prop
       {/* Conditional rendering based on isAdmin prop */}
       {isAdmin && (
         <button
-          onClick={() => navigateTo("/modify-registration")}
+          onClick={() => navigateTo("/modifyreg")}
           className="mx-4 bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-20 px-20 rounded-lg text-2xl"
         >
           Modify Registration
