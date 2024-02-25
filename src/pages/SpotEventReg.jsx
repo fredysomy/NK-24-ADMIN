@@ -7,30 +7,98 @@ import {
   where,
   getDocs,
   doc,
-  addDoc,
+  setDoc,
   updateDoc,
 } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
 
-export function SimpleRegistrationForm() {
+function EventRegistrationForm() {
   const [formData, setFormData] = useState({
     attended: true,
-    name: "",
     email: "",
-    eventId: "",
-    eventName: "",
+    eventid: "",
+    eventname: "",
+    id: "",
     nkid: "",
     online: false,
-    paymentId: "spot",
+    payment_id: "spot",
     phone: "",
-    refCode: "nor",
-    team: "null",
-    branch: "",
-    college: "",
-    semester: "",
-    memberName: "",
-    CACode: "",
+    refcode: "nor",
+    team: null,
+    username: "",
   });
+
+  const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
   const [teamMembers, setTeamMembers] = useState([]);
+  const navigate = useNavigate();
+  const [isSignUpClicked, setIsSignUpClicked] = useState(false);
+
+  let globalEventName = "";
+  const handleRegistration = async () => {
+    const eventName = await getEventName(formData.eventid);
+    globalEventName = eventName;
+    handleAddToDatabase();
+  };
+
+  const handleAddToDatabase = async () => {
+    try {
+      const customId = `${formData.nkid}-${formData.eventid}`;
+      if (!customId) {
+        console.log("No custom ID provided.");
+        return;
+      }
+      console.log("This is Global team ",globalTeamMembers);
+      const teamString = concatenateTeamMembers(globalTeamMembers);
+      console.log("New : ",teamString);
+      const docRef = doc(db, "Registrations2", customId);
+      const { memberName, ...dataWithoutId } = formData;
+      await setDoc(docRef, dataWithoutId);
+      updateDB(customId, teamString);
+    } catch (error) {
+      console.error("Error registering user:", error.message);
+      console.error("Firestore error details:", error);
+    }
+  };
+  const updateDB = async (id, team) => {
+    try {
+      const docRef = doc(db, "Registrations2", id);
+      await updateDoc(docRef, {
+        team: team,
+        eventname: globalEventName,
+      });
+      alert("Event Registration Successfull");
+      alert("Your Event Registration ID is : " + id);
+      navigate("/selection");
+    } catch (error) {
+      console.error("Error updating document:", error);
+    }
+  };
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const concatenateTeamMembers = (teamMembers) => {
+    console.log("This is Team Members ",teamMembers);
+    if (!teamMembers || teamMembers.length === 1 || teamMembers[0] === null) {
+      return null;
+    }
+    console.log("after NULL");
+    return teamMembers.join(",");
+  };
+
+  let globalTeamMembers = [];
+  const handleAddMember = () => {
+    const newMemberName = formData.memberName;
+    const updatedTeamMembers = [...teamMembers, newMemberName];
+    setTeamMembers(updatedTeamMembers);
+    globalTeamMembers = updatedTeamMembers;
+    setFormData({ ...formData, memberName: "" });
+  };
 
   const getEventName = async (eventId) => {
     try {
@@ -47,154 +115,98 @@ export function SimpleRegistrationForm() {
       console.error("Error fetching event name:", error.message);
     }
   };
-  const [isSignUpClicked, setIsSignUpClicked] = useState(false);
 
   const handleSignUp = () => {
     setIsSignUpClicked(true);
   };
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    await fetchDetails(formData.nkid);
+    setLoading(false);
+    setSubmitted(true);
   };
-
-  const handleMemberChange = (e) => {
-    setFormData({
-      ...formData,
-      memberName: e.target.value,
-    });
-  };
-
-  const concatenateTeamMembers = (teamMembers) => {
-    if (!teamMembers || teamMembers.length === 0) {
-      return null;
-    }
-    return teamMembers.join(",");
-  };
-
-  let globalTeamMembers = [];
-  const handleAddMember = () => {
-    const newMemberName = formData.memberName;
-    const updatedTeamMembers = [...teamMembers, newMemberName];
-    setTeamMembers(updatedTeamMembers);
-    globalTeamMembers = updatedTeamMembers;
-    setFormData({ ...formData, memberName: "" });
-  };
-
-  const handleRegistration = async () => {
-    const eventName = await getEventName(formData.eventId);
-    const ids = doc(collection(db, "users2test")).id;
+  const fetchDetails = async (nkid) => {
     try {
-      setFormData({
-        ...formData,
-        eventName: eventName,
-        CACode: ids,
-      });
-    } catch (error) {
-      console.error("Error registering user:", error.message);
-    }
-    try {
-      await addDoc(collection(db, "users2test"), {
-        CACode: ids,
-        NKID: `NK-${ids.substring(0, 5).toUpperCase()}`,
-        branch: formData.branch,
-        college: formData.college,
-        email: formData.email,
-        name: formData.name,
-        phoneNumber: formData.phone,
-        semester: formData.semester,
-        isCA: false,
-        refCount: 0,
-      });
-      alert("Participant Added Successfully");
-    } catch (error) {
-      console.error("Error registering user:", error.message);
-      console.error("Firestore error details:", error);
-    }
-    const concatenatedString = concatenateTeamMembers(globalTeamMembers);
-    const teamnames =
-      globalTeamMembers.length === 0 || concatenatedString === ""
-        ? null
-        : concatenatedString;
+      const usersCollectionRef = collection(db, "users"); // Assuming "users" is your collection name
+      const q = query(usersCollectionRef, where("NKID", "==", nkid)); // Define the query
+      const querySnapshot = await getDocs(q);
 
-    console.log(teamnames);
-
-    try {
-      await addDoc(collection(db, "Registrations2"), {
-        attended: true,
-        email: formData.email,
-        eventId: formData.eventId,
-        eventName: eventName,
-        id: ids,
-        nkid: `NK-${ids.substring(0, 5).toUpperCase()}-${formData.eventId}`,
-        online: true,
-        paymentId: "spot",
-        phone: formData.phone,
-        refCode: "nor",
-        username: formData.name,
-        team: teamnames,
-      });
-      alert("Event Registration Added Successfully");
+      if (!querySnapshot.empty) {
+        querySnapshot.forEach((doc) => {
+          setFormData({
+            ...formData,
+            username: doc.data().name,
+            email: doc.data().email,
+            phone: doc.data().phoneNumber,
+            id: doc.data().CACode,
+          });
+        });
+      } else {
+        alert("No such user!");
+        navigate("/selection");
+      }
     } catch (error) {
-      console.error("Error registering user:", error.message);
-      console.error("Firestore error details:", error);
+      console.error("Error fetching user details:", error);
+      setUserDetails(null); // Reset user details state on error
     }
-    console.log("Registration successful!");
   };
 
   return (
     <div className="text-white font-pop">
-      <Card color="transparent" shadow={true}>
-        <Typography variant="h4" color="white">
-          Add Participant Details
-        </Typography>
-        <form className="mt-2 w-80 max-w-screen-lg sm:w-96 mx-auto p-8">
-          <div className="mb-2 flex flex-col gap-4">
-            <Typography variant="h6" color="white" className="-mb-3">
-              Name
-            </Typography>
-            <Input
-              size="lg"
-              placeholder="Leonardo DiCaprio"
-              name="name"
-              className="text-white"
-              value={formData.name}
+      <div className="text-white">
+        <h1 className="font-bold text-2xl mb-5">Register For an Event</h1>
+        <h4 className="font-bold text-xl mb-5">Enter NK ID</h4>
+        <div className="mb-5 flex justify-center items-center">
+          <form onSubmit={handleSubmit} className="flex">
+            <input
+              type="text"
+              name="nkid"
+              value={formData.nkid}
+              placeholder="NK-XXXX"
+              className="w-64 px-4 py-2 rounded-l-md border focus:outline-none bg-gray-800"
               onChange={handleChange}
             />
-            <Typography variant="h6" color="white" className="-mb-3">
-              Phone Number
-            </Typography>
-            <Input
-              size="lg"
-              placeholder="xxxxxxxxxx"
-              name="phone"
-              className="text-white"
-              value={formData.phone}
-              onChange={handleChange}
-            />
-            <Typography variant="h6" color="white">
-              Your Email
-            </Typography>
-            <Input
-              size="lg"
-              placeholder="leo@example.com"
-              name="email"
-              className="text-white"
-              value={formData.email}
-              onChange={handleChange}
-            />
-            <Typography variant="h6" color="white" className="-mb-3">
+            <button
+              type="submit"
+              disabled={loading}
+              className="px-4 py-2 border text-sm font-medium rounded-r-md text-white bg-blue-600 hover:bg-blue-700 hover:border-blue-700 disabled:bg-blue-300"
+            >
+              {loading ? "Loading..." : "Submit"}
+            </button>
+          </form>
+        </div>
+      </div>
+      <div>
+        {submitted && (
+          <>
+            <table className="border border-gray-200 mx-auto mt-5">
+              <tbody>
+                <tr>
+                  <th className="border border-gray-200 p-2 text-left bg-gray-800">
+                    Name
+                  </th>
+                  <td className="border border-gray-200 p-2 text-left bg-transparent">
+                    {formData.username}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <Typography
+              variant="h6"
+              color="white"
+              className="mb-5 mt-5 font-pop text-xl"
+            >
               Event
             </Typography>
             <select
-              name="eventId"
-              value={formData.eventId}
-              className="bg-transparent text-white h-10"
+              name="eventid"
+              value={formData.eventid}
+              className="bg-transparent text-white h-10 mb-5 border border-white rounded w-60"
               onChange={handleChange}
             >
-              <option className="text-black" value="" disabled>
+              <option className="text-black" value="null">
                 Select Event
               </option>
               <option className="text-black" value="NK-03">
@@ -432,48 +444,17 @@ export function SimpleRegistrationForm() {
                 Xperia - Arduino Coding
               </option>
             </select>
-
-            <Typography variant="h6" color="white" className="-mb-3">
-              College name
-            </Typography>
-            <Input
-              size="lg"
-              name="college"
-              className="text-white"
-              placeholder="Saintgits College Of Engineering"
-              value={formData.college}
-              onChange={handleChange}
-            />
-            <Typography variant="h6" color="white" className="-mb-3">
-              Branch
-            </Typography>
-            <Input
-              size="lg"
-              name="branch"
-              className="text-white"
-              placeholder="CS"
-              value={formData.branch}
-              onChange={handleChange}
-            />
-            <Typography variant="h6" color="white" className="-mb-3">
-              Semester
-            </Typography>
-            <Input
-              size="lg"
-              placeholder="VI"
-              className="text-white"
-              name="semester"
-              value={formData.semester}
-              onChange={handleChange}
-            />
-
-            <Typography variant="h6" color="white" className="-mb-3">
+            <Typography
+              variant="h6"
+              color="white"
+              className="mb-5 font-pop text-xl"
+            >
               Team
             </Typography>
             <select
               id="team"
               name="team"
-              className="bg-transparent text-white border-white h-10"
+              className="bg-transparent text-white h-10 border border-white rounded w-60 mb-5"
               value={formData.team}
               onChange={handleChange}
             >
@@ -485,14 +466,14 @@ export function SimpleRegistrationForm() {
               </option>
             </select>
             {formData.team === "team" && (
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col items-center w-60 mx-auto">
                 {teamMembers.map((member, index) => (
                   <Input
                     key={index}
                     size="lg"
                     placeholder={`Member ${index + 1}'s Name`}
                     value={member}
-                    className="text-white"
+                    className="text-white mb-5"
                     readOnly
                   />
                 ))}
@@ -503,34 +484,36 @@ export function SimpleRegistrationForm() {
                     name="memberName"
                     className="text-white"
                     value={formData.memberName}
-                    onChange={handleMemberChange}
+                    onChange={handleChange}
                   />
                 )}
                 <Button
                   size="sm"
                   color="blue-gray"
                   onClick={handleAddMember}
-                  className="text-white h-10"
+                  className="text-white h-10 mt-5"
                 >
                   Add Member
                 </Button>
               </div>
             )}
-          </div>
-          <Button
-            className="mt-4"
-            onClick={() => {
-              handleSignUp();
-              handleAddMember();
-              handleRegistration(); // Pass handleRegistration as a callback function
-            }}
-          >
-            Sign Up
-          </Button>
-        </form>
-      </Card>
+            <div>
+              <Button
+                className="mt-4"
+                onClick={() => {
+                  handleSignUp();
+                  handleAddMember();
+                  handleRegistration();
+                }}
+              >
+                Register For Event
+              </Button>
+            </div>
+          </>
+        )}
+      </div>
     </div>
   );
 }
 
-export default SimpleRegistrationForm;
+export default EventRegistrationForm;

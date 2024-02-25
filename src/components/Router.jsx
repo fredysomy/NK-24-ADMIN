@@ -1,13 +1,14 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
-import RegistrationQuery from "../pages/OnlineReg";
-import ParticipantDetails from "../pages/EventParticipants";
+import RegistrationQuery from "../pages/AttendanceMarker";
+import ParticipantDetails from "../pages/EventParticipantsFullDetails";
 import SelectionPage from "../pages/SelectionPage";
 import Login from "../pages/Login";
-import EventList from "../pages/EventsList";
-import ParticipantDetailsPage from "../pages/EventParticipantsPage";
-import SpotReg from "../pages/SpotReg";
+import EventList from "../pages/EventRegistrations";
+import ParticipantDetailsPage from "../pages/EventRegDetails";
+import SpotReg from "../pages/SpotUserReg";
 import ModificationPage from "../pages/ModificationPage";
+import EventRegistrationForm from "../pages/SpotEventReg";
 export function RouterPaths() {
   return (
     <Routes>
@@ -20,8 +21,9 @@ export function RouterPaths() {
       <Route path="/" element={<Login />} />
       <Route path="/onlinepage" element={<RegistrationQuery />} />
       <Route path="/selection" element={<SelectionPage />} />
-      <Route path="/spot-registration" element={<SpotReg />} />
-      <Route path="/modify-registration" element={<ModificationPage />} />
+      <Route path="/spotuserreg" element={<SpotReg />} />
+      <Route path="/spoteventreg" element={<EventRegistrationForm />} />
+      <Route path="/modifyreg" element={<ModificationPage />} />
     </Routes>
   );
 }
