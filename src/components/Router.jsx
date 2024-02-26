@@ -7,10 +7,11 @@ import Login from "../pages/Login";
 import EventList from "../pages/EventRegistrations";
 import ParticipantDetailsPage from "../pages/EventRegDetails";
 import ModificationPage from "../pages/ModificationPage";
-import EventRegistrationForm from "../pages/SpotEventReg";
 import EventUserSelection from "../pages/EventUserSelection";
 import CampusAmbassador from "../pages/CampusAmbassador";
 import PrivateRoutes from "./PrivateRoutes";
+import SimpleRegistrationForm from "../pages/SpotUserReg";
+import EventRegistrationForm from "../pages/SpotEventReg";
 
 export function RouterPaths() {
   const location = useLocation();
@@ -31,8 +32,8 @@ export function RouterPaths() {
             <Route path="/onlinepage" element={<RegistrationQuery />} />
             <Route path="/selection" element={<SelectionPage />} />
             <Route path="/modifyreg" element={<ModificationPage />} />
-            <Route path="/spoteventreg" element={<EventUserSelection />} />
-            <Route path="/spotuserreg" element={<EventRegistrationForm />} />
+            <Route path="/spoteventreg" element={<EventRegistrationForm/>} />
+            <Route path="/spotuserreg" element={<SimpleRegistrationForm />} />
             <Route path="/spotselection" element={<EventUserSelection />} />
           </>
         )}
