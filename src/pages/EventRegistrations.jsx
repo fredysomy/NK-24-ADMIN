@@ -12,13 +12,17 @@ import {
 } from "firebase/firestore";
 
 function EventList() {
+  const navigate = useNavigate();
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(false);
   const [totalRegistrations, setTotalRegistrations] = useState(0);
   const [eventRegistrations, setEventRegistrations] = useState({});
   const [regData,setRegData]=useState([]);
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
   const firestore = getFirestore();
+  const navigateTo = (path) => {
+    navigate(path);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -77,7 +81,7 @@ fetchData();
 
   const handleViewDetails = (eventId) => {
     console.log("Navigating to event details page:", eventId);
-    navigate(`/events/${eventId}`);
+    navigate(`/events/${eventId}`, { state: { auth: true } });
   };
 
 

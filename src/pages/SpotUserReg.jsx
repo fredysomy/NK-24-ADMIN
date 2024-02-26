@@ -65,7 +65,7 @@ export function SimpleRegistrationForm() {
 
       alert("Participant Added Successfully");
       alert("NKID is : " + NKID);
-      navigate("/spoteventreg");
+      navigate("/spoteventreg", { state: { auth: true } });
     } catch (error) {
       console.error("Error registering user:", error.message);
       console.error("Firestore error details:", error);

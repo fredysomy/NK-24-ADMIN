@@ -324,7 +324,7 @@ function RegistrationQuery() {
                   <button
                     onClick={async () => {
                       await updateUser2(nkid,selectedField, newValue);
-                      navigateTo("/selection");
+                      navigate("/selection", { state: { auth: true } });
                     }}
                     className="mt-2 px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700"
                   >

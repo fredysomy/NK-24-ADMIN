@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import React, { useState, useEffect,use } from "react";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { db } from "../firebase/firebase";
 import {
   collection,
@@ -9,12 +9,15 @@ import {
 } from "firebase/firestore";
 
 function ParticipantDetailsPage() {
+  const navigate = useNavigate();
   const { eventId } = useParams();
   const [eventDetails, setEventDetails] = useState({});
   const [participants, setParticipants] = useState([]);
   const [userDetails, setUserDetails] = useState({});
   const [loading, setLoading] = useState(true);
-
+  const navigateTo = (path) => {
+    navigate(path);
+  };
   useEffect(() => {
     console.log("Fetching event data...");
     const fetchEventData = async () => {
@@ -107,7 +110,7 @@ function ParticipantDetailsPage() {
               Total Participants: {totalParticipants}
             </p>
             <Link to="/events">
-              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-5">
+              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-5" onClick={() => navigateTo("/spotselection", { state: { auth: true } })}>
                 Search Another Event
               </button>
             </Link>
