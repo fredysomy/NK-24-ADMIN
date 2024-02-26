@@ -69,7 +69,7 @@ function EventRegistrationForm() {
       });
       alert("Event Registration Successfull");
       alert("Your Event Registration ID is : " + id);
-      navigate("/selection");
+      navigate("/selection", { state: { auth: true } });
     } catch (error) {
       console.error("Error updating document:", error);
     }
@@ -129,7 +129,7 @@ function EventRegistrationForm() {
   };
   const fetchDetails = async (nkid) => {
     try {
-      const usersCollectionRef = collection(db, "users"); // Assuming "users" is your collection name
+      const usersCollectionRef = collection(db, "users2test"); // Assuming "users" is your collection name
       const q = query(usersCollectionRef, where("NKID", "==", nkid)); // Define the query
       const querySnapshot = await getDocs(q);
 
