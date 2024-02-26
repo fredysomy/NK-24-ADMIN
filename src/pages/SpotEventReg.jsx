@@ -37,8 +37,13 @@ function EventRegistrationForm() {
   let globalEventName = "";
   const handleRegistration = async () => {
     const eventName = await getEventName(formData.eventid);
-    globalEventName = eventName;
-    handleAddToDatabase();
+    if (eventName !== null) {
+      console.log("Hi");
+      globalEventName = eventName;
+      handleAddToDatabase();
+    } else {
+      navigate("/selection", { state: { auth: true } });
+    }
   };
 
   const handleAddToDatabase = async () => {
@@ -48,9 +53,7 @@ function EventRegistrationForm() {
         console.log("No custom ID provided.");
         return;
       }
-      console.log("This is Global team ",globalTeamMembers);
       const teamString = concatenateTeamMembers(globalTeamMembers);
-      console.log("New : ",teamString);
       const docRef = doc(db, "Registrations2", customId);
       const { memberName, ...dataWithoutId } = formData;
       await setDoc(docRef, dataWithoutId);
@@ -83,11 +86,9 @@ function EventRegistrationForm() {
   };
 
   const concatenateTeamMembers = (teamMembers) => {
-    console.log("This is Team Members ",teamMembers);
     if (!teamMembers || teamMembers.length === 1 || teamMembers[0] === null) {
       return null;
     }
-    console.log("after NULL");
     return teamMembers.join(",");
   };
 
@@ -102,19 +103,33 @@ function EventRegistrationForm() {
 
   const getEventName = async (eventId) => {
     try {
-      let eventName = "";
-      const eventsRef = collection(db, "events");
-      const q = query(eventsRef, where("id", "==", eventId));
-      const querySnapshot = await getDocs(q);
-      querySnapshot.forEach((doc) => {
-        eventName = doc.data().name;
-      });
+        const eventsRef = collection(db, "events");
+        const q = query(eventsRef, where("id", "==", eventId));
+        const querySnapshot = await getDocs(q);
 
-      return eventName;
+        if (!querySnapshot.empty) {
+            const doc = querySnapshot.docs[0];
+            const eventDocRef = doc.ref;
+            let spotOn = parseInt(doc.data().spot_on);
+            if (!isNaN(spotOn)) {
+                if (spotOn === 0) {
+                    alert("Spots Left is already 0");
+                    return null;
+                } else {
+                    spotOn -= 1;
+                    const newSpotOn = spotOn.toString();
+                    await updateDoc(eventDocRef, { spot_on: newSpotOn });
+                    return doc.data().name;
+                }
+            }
+        }
+        return null; // Return null if no event name is found
     } catch (error) {
-      console.error("Error fetching event name:", error.message);
+        console.error("Error fetching event name:", error.message);
+        throw error;
     }
-  };
+};
+
 
   const handleSignUp = () => {
     setIsSignUpClicked(true);
@@ -145,7 +160,7 @@ function EventRegistrationForm() {
         });
       } else {
         alert("No such user!");
-        navigate("/selection");
+        navigate("/selection", { state: { auth: true } });
       }
     } catch (error) {
       console.error("Error fetching user details:", error);
