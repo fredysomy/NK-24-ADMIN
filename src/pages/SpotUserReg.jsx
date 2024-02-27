@@ -37,7 +37,7 @@ export function SimpleRegistrationForm() {
   };
 
   const handleRegistration = async () => {
-    const ids = doc(collection(db, "users2test")).id;
+    const ids = doc(collection(db, "users")).id;
     try {
       setFormData({
         ...formData,
@@ -47,10 +47,10 @@ export function SimpleRegistrationForm() {
       console.error("Error registering user:", error.message);
     }
     try {
-      const ids = doc(collection(db, "users2test")).id;
+      const ids = doc(collection(db, "users")).id;
       const NKID = `NK-${ids.substring(0, 5).toUpperCase()}`;
 
-      await addDoc(collection(db, "users2test"), {
+      await addDoc(collection(db, "users"), {
         CACode: ids,
         NKID: NKID,
         branch: formData.branch,

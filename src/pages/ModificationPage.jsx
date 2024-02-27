@@ -137,14 +137,14 @@ function RegistrationQuery() {
       console.log("This is global : ", globalNkid.substring(0, 8));
 
       const user2RefQuery = query(
-        collection(db, "users2test"),
+        collection(db, "users"),
         where("NKID", "==", globalNkid.substring(0, 8))
       );
       const querySnapshot = await getDocs(user2RefQuery);
 
       if (!querySnapshot.empty) {
         const docSnapshot = querySnapshot.docs[0]; // Assuming there's only one matching document
-        const user2Ref = doc(db, "users2test", docSnapshot.id);
+        const user2Ref = doc(db, "users", docSnapshot.id);
 
         console.log("Updating field:", globalSelectedValue);
         console.log("New value:", globalValue);
@@ -325,7 +325,7 @@ function RegistrationQuery() {
                   <button
                     onClick={async () => {
                       await updateUser2(nkid,selectedField, newValue);
-                      navigate("/selection", { state: { auth: true } });
+                      navigateTo("/selection", { state: { auth: true } });
                     }}
                     className="mt-2 px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700"
                   >

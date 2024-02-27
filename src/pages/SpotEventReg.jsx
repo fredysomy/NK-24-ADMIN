@@ -54,7 +54,7 @@ function EventRegistrationForm() {
         return;
       }
       const teamString = concatenateTeamMembers(globalTeamMembers);
-      const docRef = doc(db, "Registrations2", customId);
+      const docRef = doc(db, "Registrations", customId);
       const { memberName, ...dataWithoutId } = formData;
       await setDoc(docRef, dataWithoutId);
       updateDB(customId, teamString);
@@ -65,7 +65,7 @@ function EventRegistrationForm() {
   };
   const updateDB = async (id, team) => {
     try {
-      const docRef = doc(db, "Registrations2", id);
+      const docRef = doc(db, "Registrations", id);
       await updateDoc(docRef, {
         team: team,
         eventname: globalEventName,
@@ -147,7 +147,7 @@ function EventRegistrationForm() {
   };
   const fetchDetails = async (identifier) => {
     try {
-      const usersCollectionRef = collection(db, "users2test"); // Assuming "users" is your collection name
+      const usersCollectionRef = collection(db, "users"); // Assuming "users" is your collection name
       let q;
       
       if (identifier.substring(0, 2).toUpperCase() === 'NK') {
