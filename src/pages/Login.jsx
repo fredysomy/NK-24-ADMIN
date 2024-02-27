@@ -23,11 +23,11 @@ export const Login = () => {
     event.preventDefault();
   
     const credentials = [
-      { username: "counter1@regcom", password: "pass" },
-      { username: "counter2@regcom", password: "tyu" },
-      { username: "counter3@regcom", password: "abhinand123" },
-      { username: "counter4@regcom", password: "super" },
-      { username: "counter5@regcom", password: "su" },
+      { username: "counter1@regcom", password: "regcom1" },
+      { username: "counter2@regcom", password: "regcom2" },
+      { username: "counter3@regcom", password: "regcom3" },
+      { username: "counter4@regcom", password: "regcom4" },
+      { username: "counter5@regcom", password: "regcom5" },
       { username: "subhead1@regcom", password: "super" },
       { username: "head@regcom", password: "super" },
       { username: "subhead2@regcom", password: "super" },

@@ -13,8 +13,8 @@ function SelectionPage() { // Assuming isAdmin is passed as a prop
           }}
         className="mx-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-20 px-20 rounded-lg text-2xl"
       >
-        User Registration
-      </button>
+        Add Participant
+        </button>
       <button
         onClick={() => {
             navigate('/spoteventreg', { state: { auth: true } })

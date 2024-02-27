@@ -62,9 +62,9 @@ export function SimpleRegistrationForm() {
         isCA: false,
         refCount: 0,
       });
-
-      alert("Participant Added Successfully");
       alert("NKID is : " + NKID);
+      alert("Participant Added Successfully");
+      
       navigate("/spoteventreg", { state: { auth: true } });
     } catch (error) {
       console.error("Error registering user:", error.message);

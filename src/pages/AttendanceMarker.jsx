@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { db } from "../firebase/firebase";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { collection, query, where, getDocs } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
 
 function RegistrationQuery() {
   const [nkid, setRegistrationId] = useState("");
@@ -11,6 +12,7 @@ function RegistrationQuery() {
   const [attended, setAttended] = useState(false);
   const [registrationData, setRegistrationData] = useState(null);
   const [team, setTeam] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (details && details.hasOwnProperty("attended")) {
@@ -116,17 +118,21 @@ function RegistrationQuery() {
       alert("Failed to update the document.");
     }
   };
+  const handleGoBack = () => {
+    navigate("/selection", { state: {auth: true}}); // Navigate to the selection page
+  };
 
   return (
-    <div className="text-white">
-      <h1 className="font-bold text-2xl mb-5">Online Registration Details</h1>
+    <div className="text-white font-pop">
+      <h1 className="font-bold text-2xl mb-5">Online Registration Attendance Marker</h1>
+      <h3 className="font-pop text-xl mb-5">Enter NK Event Registration ID</h3>
       <div className="mb-5 flex justify-center items-center">
         <form onSubmit={handleSubmit} className="flex">
           <input
             type="text"
             value={nkid}
             onChange={handleInputChange}
-            placeholder="Enter NK Registration ID"
+            placeholder="NK-XXXXX-NK-XX"
             className="w-64 px-4 py-2 rounded-l-md border focus:outline-none bg-gray-800"
           />
           <button
@@ -252,6 +258,14 @@ function RegistrationQuery() {
           <div className="flex-1"></div>
         </div>
       )}
+       <div className="mt-5">
+        <button
+          onClick={handleGoBack}
+          className="px-4 py-2 border text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 hover:border-blue-700"
+        >
+          Go Back
+        </button>
+      </div>
     </div>
   );
 }
