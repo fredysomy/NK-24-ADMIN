@@ -152,9 +152,9 @@ function RegistrationQuery() {
         await updateDoc(user2Ref, {
           [globalSelectedValue]: globalValue, // Update the selected field with the global value
         });
-        console.log("User2 updated successfully!");
+        console.log("User Details Updated Successfully!");
       } else {
-        console.log("No matching document found in user2 collection");
+        alert("Error Updating User Details");
       }
     } catch (error) {
       console.error("Error updating user2:", error);
@@ -162,15 +162,16 @@ function RegistrationQuery() {
   };
 
   return (
-    <div className="text-white">
-      <h1 className="font-bold text-2xl mb-5">Online Registration Details</h1>
+    <div className="text-white font-pop">
+      <h1 className="font-bold text-2xl mb-5">Modify User Details</h1>
+      <h3 className="text-xl mb-5">Enter NK Event Registration ID</h3>
       <div className="mb-5 flex justify-center items-center">
         <form onSubmit={handleSubmit} className="flex">
           <input
             type="text"
             value={nkid}
             onChange={handleInputChange}
-            placeholder="Enter NK Registration ID"
+            placeholder="NK-XXXXX-NK-XX"
             className="w-64 px-4 py-2 rounded-l-md border focus:outline-none bg-gray-800"
           />
           <button

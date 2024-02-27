@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Card, Input, Button, Typography } from "@material-tailwind/react";
 import { db } from "../firebase/firebase";
 import {
@@ -9,6 +9,7 @@ import {
   doc,
   setDoc,
   updateDoc,
+  orderBy,
 } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 
@@ -103,33 +104,32 @@ function EventRegistrationForm() {
 
   const getEventName = async (eventId) => {
     try {
-        const eventsRef = collection(db, "events");
-        const q = query(eventsRef, where("id", "==", eventId));
-        const querySnapshot = await getDocs(q);
+      const eventsRef = collection(db, "events");
+      const q = query(eventsRef, where("id", "==", eventId));
+      const querySnapshot = await getDocs(q);
 
-        if (!querySnapshot.empty) {
-            const doc = querySnapshot.docs[0];
-            const eventDocRef = doc.ref;
-            let spotOn = parseInt(doc.data().spot_on);
-            if (!isNaN(spotOn)) {
-                if (spotOn === 0) {
-                    alert("Spots Left is already 0");
-                    return null;
-                } else {
-                    spotOn -= 1;
-                    const newSpotOn = spotOn.toString();
-                    await updateDoc(eventDocRef, { spot_on: newSpotOn });
-                    return doc.data().name;
-                }
-            }
+      if (!querySnapshot.empty) {
+        const doc = querySnapshot.docs[0];
+        const eventDocRef = doc.ref;
+        let spotOn = parseInt(doc.data().spot_on);
+        if (!isNaN(spotOn)) {
+          if (spotOn === 0) {
+            alert("Spots Left is already 0");
+            return null;
+          } else {
+            spotOn -= 1;
+            const newSpotOn = spotOn.toString();
+            await updateDoc(eventDocRef, { spot_on: newSpotOn });
+            return doc.data().name;
+          }
         }
-        return null; // Return null if no event name is found
+      }
+      return null; // Return null if no event name is found
     } catch (error) {
-        console.error("Error fetching event name:", error.message);
-        throw error;
+      console.error("Error fetching event name:", error.message);
+      throw error;
     }
-};
-
+  };
 
   const handleSignUp = () => {
     setIsSignUpClicked(true);
@@ -218,245 +218,245 @@ function EventRegistrationForm() {
             <select
               name="eventid"
               value={formData.eventid}
-              className="bg-transparent text-white h-10 mb-5 border border-white rounded w-60"
+              className="bg-transparent text-white h-10 mb-5 border border-white rounded w-80"
               onChange={handleChange}
             >
               <option className="text-black" value="null">
                 Select Event
               </option>
               <option className="text-black" value="NK-03">
-                3×3 Football
+                3×3 Football [Team (3-5)] [Rs 300]
               </option>
               <option className="text-black" value="NK-52">
-                AI IMAGE GENERATOR
+                AI IMAGE GENERATOR [Team (2-2)] [Rs 50]
               </option>
               <option className="text-black" value="NK-74">
-                ALL TERRAIN ROBO RACE
+                ALL TERRAIN ROBO RACE [Team (1-4)] [Rs 200]
               </option>
               <option className="text-black" value="NK-80">
-                AUTOSKETCH
+                AUTOSKETCH [Single] [Rs 50]
               </option>
               <option className="text-black" value="NK-36">
-                Animazing
+                Animazing [Single] [Rs 30]
               </option>
               <option className="text-black" value="NK-47">
-                Artle
+                Artle [Single] [Rs 40]
               </option>
               <option className="text-black" value="NK-49">
-                BREAK THE QUERY
+                BREAK THE QUERY [Single] [Rs 50]
               </option>
               <option className="text-black" value="NK-75">
-                Basketball 5x5(Female)
+                Basketball 5x5(Female) [Team (5-12)] [Rs 250]
               </option>
               <option className="text-black" value="NK-25">
-                Basketball 5x5(Male)
+                Basketball 5x5(Male) [Team (5-12)] [Rs 250]
               </option>
               <option className="text-black" value="NK-59">
-                Best Anchor
+                Best Anchor [Single] [Rs 100]
               </option>
               <option className="text-black" value="NK-65">
-                Blockchain Workshop
+                Blockchain Workshop [Single] [Rs 100]
               </option>
               <option className="text-black" value="NK-38">
-                CSS CODE CHALLENGE
+                CSS CODE CHALLENGE [Team (1-3)] [Rs 50]
               </option>
               <option className="text-black" value="NK-68">
-                CUT THE CLASH
+                CUT THE CLASH [Single] [Rs 80]
               </option>
               <option className="text-black" value="NK-11">
-                Cad Clash
+                Cad Clash [Single] [Rs 50]
               </option>
               <option className="text-black" value="NK-46">
-                Call of Duty Mobile
+                Call of Duty Mobile [Team (3-4)] [Rs 100]
               </option>
               <option className="text-black" value="NK-30">
-                Canoe Workshop
+                Canoe Workshop [Single] [Rs 100]
               </option>
               <option className="text-black" value="NK-57">
-                Chem hunt
+                Chem hunt [Team (2-3)] [Rs 50]
               </option>
               <option className="text-black" value="NK-64">
-                Chemcar
+                Chemcar [Team (2-3)] [Rs 100]
               </option>
               <option className="text-black" value="NK-21">
-                Circuit Debugging
+                Circuit Debugging [Team (2-3)] [Rs 80]
               </option>
               <option className="text-black" value="NK-31">
-                CodeOptimizer
+                CodeOptimizer [Team (1-2)] [Rs 50]
               </option>
               <option className="text-black" value="NK-18">
-                Come let's,build
+                Come let's,build [Team (2-4)] [Rs 80]
               </option>
               <option className="text-black" value="NK-10">
-                County Cricket
+                County Cricket [Team (5-7)] [Rs 500]
               </option>
               <option className="text-black" value="NK-07">
-                DOUBLE TROUBLE
+                DOUBLE TROUBLE [Team (2-2)] [Rs 50]
               </option>
               <option className="text-black" value="NK-08">
-                Dumb Charades
+                Dumb Charades [Team (2-2)] [Rs 30]
               </option>
               <option className="text-black" value="NK-43">
-                Duo-Dance
+                Duo-Dance [Team (2-2)] [Rs 100]
               </option>
               <option className="text-black" value="NK-69">
-                E-Soldero
+                E-Soldero [Single] [Rs 50]
               </option>
               <option className="text-black" value="NK-15">
-                Efootball 2024 (PES) (Online )
+                Efootball 2024 (PES) (Online ) [Single] [Rs 50]
               </option>
               <option className="text-black" value="NK-28">
-                Fifa 24
+                Fifa 24 [Single] [Rs 75]
               </option>
               <option className="text-black" value="NK-04">
-                Film triffle
+                Film triffle [Team (2-2)] [Rs 40]
               </option>
               <option className="text-black" value="NK-42">
-                Flavorcraft Ventures: Innovate, Create, Savour
+                Flavorcraft Ventures: Innovate, Create, Savour [Single] [Rs 30]
               </option>
               <option className="text-black" value="NK-70">
-                GOURMET BATTLE
+                GOURMET BATTLE [Team (2-2)] [Rs 100]
               </option>
               <option className="text-black" value="NK-56">
-                GROMATICI
+                GROMATICI [Team (2-3)] [Rs 50]
               </option>
               <option className="text-black" value="NK-41">
-                Grandmaster Gala
+                Grandmaster Gala [Single] [Rs 50]
               </option>
               <option className="text-black" value="NK-61">
-                INQUEST
+                INQUEST [Team (2-5)] [Rs 25]
               </option>
               <option className="text-black" value="NK-35">
-                IPL Draft
+                IPL Draft [Team (1-3)] [Rs 30]
               </option>
               <option className="text-black" value="NK-05">
-                Infinity glam
+                Infinity glam [Team (10-22)] [Rs 2000]
               </option>
               <option className="text-black" value="NK-22">
-                JAM(English)
+                JAM(English) [Single] [Rs 30]
               </option>
               <option className="text-black" value="NK-20">
-                JAM(Malayalam)
+                JAM(Malayalam) [Single] [Rs 30]
               </option>
               <option className="text-black" value="NK-37">
-                Kaptured"24
+                Kaptured"24 [Single] [Rs 30]
               </option>
               <option className="text-black" value="NK-72">
-                Kickering
+                Kickering [Single] [Rs 100]
               </option>
               <option className="text-black" value="NK-24">
-                Line Follower maze
+                Line Follower maze [Single] [Rs 200]
               </option>
               <option className="text-black" value="NK-16">
-                Make the cut
+                Make the cut [Single] [Rs 100]
               </option>
               <option className="text-black" value="NK-77">
-                Man Of Steel
+                Man Of Steel [Single] [Rs 150]
               </option>
               <option className="text-black" value="NK-79">
-                Mech Maniac
+                Mech Maniac [Team (1-2)] [Rs 50]
               </option>
               <option className="text-black" value="NK-48">
-                Millet Marvels: A Green Revolution
+                Millet Marvels: A Green Revolution [Single] [Rs 100]
               </option>
               <option className="text-black" value="NK-44">
-                Mr. and Ms. Nakshathra
+                Mr. and Ms. Nakshatra [Single] [Rs 200]
               </option>
               <option className="text-black" value="NK-12">
-                Neo-Graffiti
+                Neo-Graffiti [Single] [Rs 50]
               </option>
               <option className="text-black" value="NK-34">
-                Nirvana Nation
+                Nirvana Nation [Team (3-10)] [Rs 300]
               </option>
               <option className="text-black" value="NK-71">
-                PCB Designing Workshop
+                PCB Designing Workshop [Single] [Rs 150]
               </option>
               <option className="text-black" value="NK-19">
-                PIXELATE
+                PIXELATE [Single] [Rs 10]
               </option>
               <option className="text-black" value="NK-78">
-                PUBG
+                PUBG [Team (4-4)] [Rs 60]
               </option>
               <option className="text-black" value="NK-53">
-                Panoramic
+                Panoramic [Single] [Rs 30]
               </option>
               <option className="text-black" value="NK-32">
-                Pencil Mania
+                Pencil Mania [Single] [Rs 30]
               </option>
               <option className="text-black" value="NK-29">
-                QUIZADRY
+                QUIZADRY [Team (2-2)] [Rs 80]
               </option>
               <option className="text-black" value="NK-13">
-                QUIZZLE
+                QUIZZLE [Team (2-3)] [Rs 50]
               </option>
               <option className="text-black" value="NK-67">
-                Quake the structure
+                Quake the structure [Team (2-3)] [Rs 100]
               </option>
               <option className="text-black" value="NK-06">
-                Quiztopia
+                Quiztopia [Team (2-3)] [Rs 80]
               </option>
               <option className="text-black" value="NK-63">
-                REELAGRAM
+                REELAGRAM [Single] [Rs 30]
               </option>
               <option className="text-black" value="NK-14">
-                REELISTIC DELIGHTS
+                REELISTIC DELIGHTS [Single] [Rs 30]
               </option>
               <option className="text-black" value="NK-33">
-                ROBOSOCCER
+                ROBOSOCCER [Team (1-4)] [Rs 250]
               </option>
               <option className="text-black" value="NK-27">
-                Racquettes(Men)
+                Racquettes(Men) [Team (2-2)] [Rs 100]
               </option>
               <option className="text-black" value="NK-82">
-                Racquettes(Women)
+                Racquettes(Women) [Team (2-2)] [Rs 100]
               </option>
               <option className="text-black" value="NK-23">
-                SYNC STEP
+                SYNC STEP [Team (7-30)] [Rs 600]
               </option>
               <option className="text-black" value="NK-17">
-                Scene de Crime
+                Scene de Crime [Team] [Rs 100]
               </option>
               <option className="text-black" value="NK-66">
-                Sneak Attack (volleyball)
+                Sneak Attack (volleyball) [Team (6-12)] [Rs 500]
               </option>
               <option className="text-black" value="NK-39">
-                Soldering Competition
+                Soldering Competition [Single] [Rs 80]
               </option>
               <option className="text-black" value="NK-81">
-                Strike'em Down
+                Strike'em Down [Single] [Rs 40]
               </option>
               <option className="text-black" value="NK-54">
-                Strings Unplugged
+                Strings Unplugged [Team (4-10)] [Rs 500]
               </option>
               <option className="text-black" value="NK-51">
-                The Laughter Extravaganza
+                The Laughter Extravaganza [Single] [Rs 50]
               </option>
               <option className="text-black" value="NK-26">
-                Titan Actor
+                Titan Actor [Single] [Rs 80]
               </option>
               <option className="text-black" value="NK-40">
-                Treasure Pursuit
+                Treasure Pursuit [Team (1-4)] [Rs 100]
               </option>
               <option className="text-black" value="NK-50">
-                UPCYCLE FRENZY
+                UPCYCLE FRENZY [Team] [Rs 50]
               </option>
               <option className="text-black" value="NK-62">
-                VR Gaming
+                VR Gaming [Single] [Rs 60]
               </option>
               <option className="text-black" value="NK-73">
-                Valorant
+                Valorant [Team (5-5)] [Rs 100]
               </option>
               <option className="text-black" value="NK-58">
-                Voice of Nakshatra
+                Voice of Nakshatra [Single] [Rs 150]
               </option>
               <option className="text-black" value="NK-02">
-                Watts up challenge
+                Watts up challenge [Single] [Rs 30]
               </option>
               <option className="text-black" value="NK-60">
-                Workshop on Drones
+                Workshop on Drones [Single] [Rs 100]
               </option>
               <option className="text-black" value="NK-55">
-                Xperia - Arduino Coding
+                Xperia - Arduino Coding [Team (1-3)] [Rs 50]
               </option>
             </select>
             <Typography
@@ -464,7 +464,7 @@ function EventRegistrationForm() {
               color="white"
               className="mb-5 font-pop text-xl"
             >
-              Team
+              Type (Single or Team)
             </Typography>
             <select
               id="team"
