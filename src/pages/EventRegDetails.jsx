@@ -81,6 +81,7 @@ function ParticipantDetailsPage() {
             college: userData.college,
             branch: userData.branch,
             semester: userData.semester,
+            nkid: userData.NKID,
           };
         });
 
@@ -121,6 +122,7 @@ function ParticipantDetailsPage() {
                 <thead>
                   <tr>
                     <th className="px-4 py-2">Name</th>
+                    <th className="px-4 py-2">NK ID</th>
                     <th className="px-4 py-2">College</th>
                     <th className="px-4 py-2">Branch</th>
                     <th className="px-4 py-2">Semester</th>
@@ -132,6 +134,9 @@ function ParticipantDetailsPage() {
                     <tr key={participant.id}>
                       <td className="border px-4 py-2">
                         {participant.username}
+                      </td>
+                      <td className="border px-4 py-2">
+                        {userDetails[participant.nkid]?.nkid || "Loading..."}
                       </td>
                       <td className="border px-4 py-2">
                         {userDetails[participant.nkid]?.college || "Loading..."}
