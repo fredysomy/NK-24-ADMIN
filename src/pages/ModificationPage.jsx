@@ -40,14 +40,12 @@ function RegistrationQuery() {
     const value = e.target.value;
     setNewValues(value);
     globalValue = value; // Update global value variable
-    console.log("Global V ", globalValue);
   };
 
   const handleFieldSelectChange = (e) => {
     const selectedValue = e.target.value;
     setSelectedField(selectedValue);
     globalSelectedValue = selectedValue;
-    console.log("Global SV ", globalSelectedValue); // Update global selected value variable
   };
 
   useEffect(() => {
@@ -88,14 +86,12 @@ function RegistrationQuery() {
       const q = query(usersRef, where("NKID", "==", nkid));
       const querySnapshot = await getDocs(q);
       globalNkid = nkid;
-      console.log("This is inside fetchUserDetails : ",globalNkid);
-
       querySnapshot.forEach((doc) => {
         setUserDetails(doc.data());
       });
 
       if (querySnapshot.empty) {
-        console.log("User details not found for NKID:", nkid);
+        alert("User details not found for NKID:", nkid);
         setUserDetails(null);
       }
     } catch (error) {
@@ -132,10 +128,6 @@ function RegistrationQuery() {
 
   const updateUser2 = async (globalNkid, globalSelectedValue, globalValue) => {
     try {
-      console.log("This is Global Selected Value : ", globalSelectedValue);
-      console.log("This is Global Value : ", globalValue);
-      console.log("This is global : ", globalNkid.substring(0, 8));
-
       const user2RefQuery = query(
         collection(db, "users"),
         where("NKID", "==", globalNkid.substring(0, 8))
@@ -149,15 +141,44 @@ function RegistrationQuery() {
         console.log("Updating field:", globalSelectedValue);
         console.log("New value:", globalValue);
 
-        await updateDoc(user2Ref, {
-          [globalSelectedValue]: globalValue, // Update the selected field with the global value
-        });
-        console.log("User Details Updated Successfully!");
+        // Update the field in either "users" or "registrations" collection based on the selected field
+        if (globalSelectedValue === "team") {
+          console.log("This is NKID in Registrations : ", globalNkid);
+          
+          const registrationRef = doc(db, "Registrations", globalNkid);
+          console.log("This is regQuerySnapshot : ", registrationRef);
+          try {
+            const registrationDocSnapshot = await getDoc(registrationRef);
+
+            if (registrationDocSnapshot.exists()) {
+              await updateDoc(registrationRef, {
+                team: globalValue,
+              });
+              alert("Team Updated Successfully!");
+            } else {
+              alert("Error Updating Team: Document not found.");
+            }
+          } catch (error) {
+            console.error("Error updating team:", error);
+            alert(
+              "An error occurred while updating team. Please try again later."
+            );
+          }
+        } else {
+          await updateDoc(user2Ref, {
+            [globalSelectedValue]: globalValue,
+          });
+          alert("Successfully Updated");
+        }
       } else {
-        alert("Error Updating User Details");
+        alert(
+          "Error Occurred: No matching document found in users collection."
+        );
       }
     } catch (error) {
       console.error("Error updating user2:", error);
+      // Handle the error appropriately
+      alert("An error occurred. Please try again later.");
     }
   };
 
@@ -303,6 +324,7 @@ function RegistrationQuery() {
               <option value="college">College</option>
               <option value="branch">Branch</option>
               <option value="semester">Semester</option>
+              <option value="team">Team</option>
             </select>
           </div>
           {/* Input fields for modifying the selected fields */}
@@ -319,13 +341,13 @@ function RegistrationQuery() {
                   type="text"
                   value={newValue}
                   onChange={handleNewValueChange}
-                  className=" w-64 px-20 py-2 rounded-md border focus:outline-none bg-gray-800 text-white"
+                  className=" w-80 px-2 py-2 rounded-md border focus:outline-none bg-gray-800 text-white"
                 />
                 <div className=" w-64 px-20 py-5 rounded-md border:black focus:outline-none bg-black-800 text-white">
                   <button
                     onClick={async () => {
-                      await updateUser2(nkid,selectedField, newValue);
-                      navigateTo("/selection", { state: { auth: true } });
+                      await updateUser2(nkid, selectedField, newValue);
+                      navigate("/selection", { state: { auth: true } });
                     }}
                     className="mt-2 px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700"
                   >
