@@ -4,8 +4,6 @@ import { useLocation } from 'react-router-dom';
 
 function SelectionPage() { // Assuming isAdmin is passed as a prop
   const navigate = useNavigate();
-  const location = useLocation();
-  const { isAdmin } = location.state || {};
   const { auth } = location.state || {};
 
 
@@ -25,15 +23,12 @@ function SelectionPage() { // Assuming isAdmin is passed as a prop
       >
         Spot Registration
       </button>
-      {/* Conditional rendering based on isAdmin prop */}
-      {isAdmin && (
         <button
           onClick={() => navigate("/modifyreg", { state: { auth: true } })}
           className="mx-4 bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-20 px-20 rounded-lg text-2xl"
         >
           Modify Registration
         </button>
-      )}
     </div>
   );
 }

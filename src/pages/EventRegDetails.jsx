@@ -1,12 +1,7 @@
-import React, { useState, useEffect,use } from "react";
+import React, { useState, useEffect, use } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { db } from "../firebase/firebase";
-import {
-  collection,
-  query,
-  where,
-  getDocs,
-} from "firebase/firestore";
+import { collection, query, where, getDocs } from "firebase/firestore";
 
 function ParticipantDetailsPage() {
   const navigate = useNavigate();
@@ -111,7 +106,12 @@ function ParticipantDetailsPage() {
               Total Participants: {totalParticipants}
             </p>
             <Link to="/events">
-              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-5" onClick={() => navigateTo("/spotselection", { state: { auth: true } })}>
+              <button
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-5"
+                onClick={() =>
+                  navigateTo("/spotselection", { state: { auth: true } })
+                }
+              >
                 Search Another Event
               </button>
             </Link>
@@ -136,7 +136,7 @@ function ParticipantDetailsPage() {
                         {participant.username}
                       </td>
                       <td className="border px-4 py-2">
-                        {userDetails[participant.nkid]?.nkid || "Loading..."}
+                      {userDetails[participant.nkid]?.nkid || "Loading..."}-{participant.eventid}
                       </td>
                       <td className="border px-4 py-2">
                         {userDetails[participant.nkid]?.college || "Loading..."}
@@ -145,7 +145,8 @@ function ParticipantDetailsPage() {
                         {userDetails[participant.nkid]?.branch || "Loading..."}
                       </td>
                       <td className="border px-4 py-2">
-                        {userDetails[participant.nkid]?.semester || "Loading..."}
+                        {userDetails[participant.nkid]?.semester ||
+                          "Loading..."}
                       </td>
                       {/* Add more table cells for additional participant details */}
                     </tr>
@@ -161,6 +162,3 @@ function ParticipantDetailsPage() {
 }
 
 export default ParticipantDetailsPage;
-
-
-
