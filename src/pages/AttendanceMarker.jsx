@@ -41,16 +41,13 @@ function RegistrationQuery() {
   };
 
   const fetchDetails = async () => {
-    console.log("Fetching details...");
     const docRef = doc(db, "Registrations", nkid);
     const docSnap = await getDoc(docRef);
-
     if (docSnap.exists()) {
       console.log("Registration details found:", docSnap.data());
       setDetails(docSnap.data());
       await fetchUserDetails(docSnap.data().nkid);
-      console.log("This is docsnap", docSnap.data().nkid);
-      await fetchRegistrationData(docSnap.data().nkid); // Fetch registration data
+      await fetchRegistrationData(nkid); 
     } else {
       alert("No such document!");
       setDetails(null);
@@ -58,15 +55,11 @@ function RegistrationQuery() {
   };
 
   const fetchUserDetails = async (nkid) => {
-    console.log("Fetching user details for NKID:", nkid);
     try {
       const usersRef = collection(db, "users");
       const q = query(usersRef, where("NKID", "==", nkid));
       const querySnapshot = await getDocs(q);
-      console.log(querySnapshot);
-
       querySnapshot.forEach((doc) => {
-        console.log("User details found:", doc.data());
         setUserDetails(doc.data());
       });
 
@@ -82,30 +75,31 @@ function RegistrationQuery() {
 
   const fetchRegistrationData = async (registrationId) => {
     try {
-      const registrationsRef = collection(db, "Registrations");
-      const q = query(registrationsRef, where("nkid", "==", registrationId));
-      const querySnapshot = await getDocs(q);
-
-      if (!querySnapshot.empty) {
-        querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          setRegistrationData(data);
-          if (data.team) {
-            setTeam(data.team); // Set the team state if it's not null
-          }
-        });
+      console.log("RegId: ", registrationId);
+      const docRef = doc(db, "Registrations", registrationId);
+      const docSnap = await getDoc(docRef);
+  
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        setRegistrationData(data);
+        if (data.team) {
+          setTeam(data.team);
+        }
+        else{
+          setTeam(null);
+        }
       } else {
         console.log("No such registration document!");
         setRegistrationData(null);
-        setTeam(null); // Ensure team is set to null if there's no document
+        setTeam(null);
       }
     } catch (error) {
       console.error("Error fetching registration data:", error);
       setRegistrationData(null);
-      setTeam(null); // Ensure team is set to null if an error occurs
+      setTeam(null);
     }
   };
-
+  
   const updateFirestoreAttended = async (newAttended) => {
     const docRef = doc(db, "Registrations", nkid);
     try {
