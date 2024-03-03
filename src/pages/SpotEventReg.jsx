@@ -135,7 +135,7 @@ function EventRegistrationForm() {
   };
 
   const handleGoBack = () => {
-    navigate("/selection", { state: {auth: true}}); // Navigate to the selection page
+    navigate("/selection", { state: { auth: true } }); // Navigate to the selection page
   };
 
   const handleSubmit = async (e) => {
@@ -149,15 +149,15 @@ function EventRegistrationForm() {
     try {
       const usersCollectionRef = collection(db, "users"); // Assuming "users" is your collection name
       let q;
-      
-      if (identifier.substring(0, 2).toUpperCase() === 'NK') {
+
+      if (identifier.substring(0, 2).toUpperCase() === "NK") {
         q = query(usersCollectionRef, where("NKID", "==", identifier));
       } else {
         q = query(usersCollectionRef, where("email", "==", identifier));
       }
-      
+
       const querySnapshot = await getDocs(q);
-  
+
       if (!querySnapshot.empty) {
         querySnapshot.forEach((doc) => {
           setFormData({
@@ -178,7 +178,6 @@ function EventRegistrationForm() {
       setUserDetails(null); // Reset user details state on error
     }
   };
-  
 
   return (
     <div className="text-white font-pop">

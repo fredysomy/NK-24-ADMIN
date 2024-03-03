@@ -73,7 +73,7 @@ function RegistrationQuery() {
     if (docSnap.exists()) {
       setDetails(docSnap.data());
       await fetchUserDetails(docSnap.data().nkid);
-      await fetchRegistrationData(docSnap.data().nkid); // Fetch registration data
+      await fetchRegistrationData(nkid); // Fetch registration data
     } else {
       alert("No such document!");
       setDetails(null);
@@ -102,29 +102,31 @@ function RegistrationQuery() {
 
   const fetchRegistrationData = async (registrationId) => {
     try {
-      const registrationsRef = collection(db, "Registrations");
-      const q = query(registrationsRef, where("nkid", "==", registrationId));
-      const querySnapshot = await getDocs(q);
-
-      if (!querySnapshot.empty) {
-        querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          setRegistrationData(data);
-          if (data.team) {
-            setTeam(data.team); // Set the team state if it's not null
-          }
-        });
+      console.log("RegId: ", registrationId);
+      const docRef = doc(db, "Registrations", registrationId);
+      const docSnap = await getDoc(docRef);
+  
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        setRegistrationData(data);
+        if (data.team) {
+          setTeam(data.team);
+        }
+        else{
+          setTeam(null);
+        }
       } else {
         console.log("No such registration document!");
         setRegistrationData(null);
-        setTeam(null); // Ensure team is set to null if there's no document
+        setTeam(null);
       }
     } catch (error) {
       console.error("Error fetching registration data:", error);
       setRegistrationData(null);
-      setTeam(null); // Ensure team is set to null if an error occurs
+      setTeam(null);
     }
   };
+  
 
   const updateUser2 = async (globalNkid, globalSelectedValue, globalValue) => {
     try {

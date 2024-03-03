@@ -21,36 +21,45 @@ export const Login = () => {
 
   const handleLogin = (event) => {
     event.preventDefault();
-  
+
     const credentials = [
-      { username: "counter1@regcom", password: "regcom1" },
-      { username: "counter2@regcom", password: "regcom2" },
-      { username: "counter3@regcom", password: "regcom3" },
-      { username: "counter4@regcom", password: "regcom4" },
-      { username: "counter5@regcom", password: "regcom5" },
+      { username: "counter1@regcom", password: "reg.com1@sgits" },
+      { username: "counter2@regcom", password: "reg.com2@sgits" },
+      { username: "counter3@regcom", password: "reg.com3@sgits" },
+      { username: "counter4@regcom", password: "reg.com4@sgits" },
+      { username: "counter5@regcom", password: "reg.com5@sgits" },
+      { username: "counter6@regcom", password: "reg.com6@sgits" },
+      { username: "counter7@regcom", password: "reg.com7@sgits" },
+      { username: "counter8@regcom", password: "reg.com8@sgits" },
+      { username: "counter9@regcom", password: "reg.com9@sgits" },
+      { username: "counter10@regcom", password: "reg.com10@sgits" },
+      { username: "counter11@regcom", password: "reg.com11@sgits" },
+      { username: "counter12@regcom", password: "reg.com12@sgits" },
+      { username: "counter13@regcom", password: "reg.com13@sgits" },
+      { username: "counter14@regcom", password: "reg.com14@sgits" },
+      { username: "counter15@regcom", password: "reg.com15@sgits" },
       { username: "subhead1@regcom", password: "super" },
       { username: "head@regcom", password: "super" },
       { username: "subhead2@regcom", password: "super" },
     ];
-  
+
     const isValidCredentials = credentials.some(
       (cred) => cred.username === username && cred.password === password
     );
-  
+
     if (isValidCredentials) {
       const isAdmin =
         username === "head@regcom" ||
         username === "subhead1@regcom" ||
         username === "subhead2@regcom";
-  
+
       const auth = true; // Assuming authentication is successful
-  
+
       navigate("/selection", { state: { isAdmin, auth } });
     } else {
       alert("Please enter the correct username and password.");
     }
   };
-  
 
   useEffect(() => {
     document.documentElement.style.overflow = "hidden";
